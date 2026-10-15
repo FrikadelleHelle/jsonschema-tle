@@ -1,0 +1,14 @@
+{
+  "name": "jsonschema-tle",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "ajv": "8.20.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}
