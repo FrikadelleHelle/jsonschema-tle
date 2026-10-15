@@ -42,10 +42,26 @@ create extension if not exists plv8;
 create extension jsonschema_tle;
 ```
 
+## Test and benchmark
+
+Both need `jsonschema_tle` installed and nothing else.
+
+```bash
+psql "$DATABASE_URL" -f test/test.sql
+psql "$DATABASE_URL" -v rows=50000 -f bench/bench.sql
+```
+
+- `test/test.sql` runs in one transaction that is rolled back, using temp tables and
+  `jsonschema_test.*` schema ids. It leaves nothing behind.
+- `bench/bench.sql` creates schema `jsonschema_bench` (failing if it already exists) and drops
+  it at the end. It registers one schema as `jsonschema_bench.order`, reused across runs; the
+  registry is append-only, so that row stays.
+
 ## Results
 
 Local: `supabase/postgres:15.19.0.004` (plv8 3.1.10, the version on Aurora 17.7), Apple Silicon,
-Docker. 50k-row `insert ... select`, median of 3. `pg_jsonschema` 0.3.3 (Rust) shown for reference.
+Docker. 50k-row `insert ... select`, median of 3. `pg_jsonschema` 0.3.3 (Rust) shown for reference;
+it was measured with an earlier revision of `bench/bench.sql`, which no longer depends on it.
 
 | payload | none | jsonschema_tle | pg_jsonschema 0.3.3 |
 |---|---|---|---|
