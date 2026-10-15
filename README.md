@@ -58,15 +58,3 @@ laptop is large (the "none" case ranged 20k–42k tps across runs).
 
 Cold start per new connection ≈115–175 ms (V8 init, runtime load, first schema compile).
 Use long-lived pooled connections.
-
-## Caveats
-
-- Numbers are from a laptop on PostgreSQL 15, not Aurora 17.7. Re-measure on staging.
-- Ajv compiles validators with `new Function`. This works in plv8 3.1.10 locally; it has not
-  been checked on Aurora. Check before installing:
-  `do $$ plv8.elog(NOTICE, new Function('return 1')()) $$ language plv8;`
-- `pg_jsonschema` releases newer than 0.3.3 add a compiled-schema type that their README
-  reports as ~4x faster; that comparison is not made here.
-- 2020-12 only. Schemas declaring another `$schema` draft are rejected. No cross-schema `$ref`
-  between registry entries. `format` is annotation-only (2020-12 default).
-- Restoring a dump re-stamps `jsonschema.schemas.created_at` with the restore time.
